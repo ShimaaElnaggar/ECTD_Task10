@@ -1,6 +1,12 @@
+import 'package:ectd_task10/sql_dp.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SqlHelper sqlHelper = SqlHelper();
+  sqlHelper.db;
+
   runApp(const MyApp());
 }
 
