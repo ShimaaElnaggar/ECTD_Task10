@@ -32,5 +32,19 @@ class SqlHelper{
      print("The error in creating database : $error");
      }
      }
-
+  void createTables()async{
+    try{
+      await db!.execute("""
+    Create table if not exists employee (
+    id Integer primary key,
+    name String not null,
+    email String not null,
+    phone String not null,
+    address String not null
+    )
+    """);
+    }catch(error){
+      print("Error in creating tables: $error");
+    }
+  }
   }
