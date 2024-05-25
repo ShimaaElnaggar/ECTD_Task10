@@ -12,4 +12,11 @@ class EmployeeModel {
     required this.phone,
     required this.address,
   });
+
+  Map<String, dynamic> row() => {
+    "name": name,
+    "email": email,
+    "phone": phone,
+    "address": address,
+  };
 }
