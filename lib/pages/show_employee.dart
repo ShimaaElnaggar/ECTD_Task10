@@ -1,64 +1,64 @@
 
 
+
+import 'package:ectd_task10/models/employee_model.dart';
+import 'package:ectd_task10/pages/add_employee.dart';
+import 'package:ectd_task10/sql_dp.dart';
 import 'package:flutter/material.dart';
 
-class ShowEmployee extends StatelessWidget {
-  const ShowEmployee({super.key});
+class ShowEmployee extends StatefulWidget {
+ List <EmployeeModel> employeeData = [];
+ var sqlHelper = SqlHelper();
+  ShowEmployee({required this.employeeData,required this.sqlHelper,super.key});
 
+  @override
+  State<ShowEmployee> createState() => _ShowEmployeeState();
+}
+
+class _ShowEmployeeState extends State<ShowEmployee> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
-        title: const Text("Add Employee",style: TextStyle(color: Colors.white),),
+        title: const Text("Show Employee",style: TextStyle(color: Colors.white),),
       ),
       body: DataTable(
-        columns: [
-          DataColumn(label: Text("id")),
-          DataColumn(label: Text("name")),
-          DataColumn(label: Text("email")),
-          DataColumn(label: Text("phone")),
-          DataColumn(label: Text("adress")),
+        columns: const [
+          DataColumn(label: Text("ID")),
+          DataColumn(label: Text("Name")),
+          DataColumn(label: Text("Email")),
+          DataColumn(label: Text("Phone")),
+          DataColumn(label: Text("Address")),
         ],
-        rows: [
-          DataRow(
-              cells: [
-                DataCell(Text("1")),
-                DataCell(Text("sama")),
-                DataCell(Text("sama@gmail.com")),
-                DataCell(Text("0132456578")),
-                DataCell(Text("12st,hjghj")),
-              ]
-          ),
-          DataRow(
-              cells: [
-                DataCell(Text("1")),
-                DataCell(Text("sama")),
-                DataCell(Text("sama@gmail.com")),
-                DataCell(Text("0132456578")),
-                DataCell(Text("12st,hjghj")),
-              ]
-          ),
-          DataRow(
-              cells: [
-                DataCell(Text("1")),
-                DataCell(Text("sama")),
-                DataCell(Text("sama@gmail.com")),
-                DataCell(Text("0132456578")),
-                DataCell(Text("12st,hjghj")),
-              ]
-          ),
-          DataRow(
-              cells: [
-                DataCell(Text("1")),
-                DataCell(Text("sama")),
-                DataCell(Text("sama@gmail.com")),
-                DataCell(Text("0132456578")),
-                DataCell(Text("12st,hjghj")),
-              ]
-          ),
-        ],
+        rows: buildRows(),
+      ),
+      floatingActionButton: FloatingActionButton(
+
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddEmployeePage(
+                    employeeData: widget.employeeData,
+                    sqlHelper: widget.sqlHelper,
+                  ))); },
+        child: const Icon(Icons.add),
       ),
     );
+  }
+
+  List<DataRow> buildRows() {
+    return widget.employeeData.map((employee) {
+      return DataRow(
+        cells: [
+          DataCell(Text(employee.id.toString())),
+          DataCell(Text(employee.name)),
+          DataCell(Text(employee.email)),
+          DataCell(Text(employee.phone)),
+          DataCell(Text(employee.address)),
+        ],
+      );
+    }).toList();
   }
 }
