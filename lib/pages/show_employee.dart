@@ -1,6 +1,4 @@
 
-
-
 import 'package:ectd_task10/models/employee_model.dart';
 import 'package:ectd_task10/pages/add_employee.dart';
 import 'package:ectd_task10/sql_dp.dart';
@@ -23,7 +21,15 @@ class _ShowEmployeeState extends State<ShowEmployee> {
         backgroundColor: Colors.deepPurple,
         title: const Text("Show Employee",style: TextStyle(color: Colors.white),),
       ),
-      body: DataTable(
+      body: widget.employeeData.isEmpty? const Center(
+        child: Text(
+            " No Employee Added Yet!",
+          style: TextStyle(
+            color: Colors.deepPurple,
+            fontSize: 20,
+          ),
+        ),
+      ):DataTable(
         columns: const [
           DataColumn(label: Text("ID")),
           DataColumn(label: Text("Name")),
