@@ -80,10 +80,12 @@ class _ShowEmployeeState extends State<ShowEmployee> {
             children: [
               IconButton(onPressed:(){
                 updateEmployee(employee);
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) =>
+                    AddEmployeePage(
+                        employeeData: widget.employeeData,
+                        sqlHelper: widget.sqlHelper)));
                 print("Employee is updated");
-                setState(() {
-
-                });
               },icon: const Icon(Icons.edit,color: Colors.deepPurple,)),
               IconButton(onPressed: (){
                 deleteEmployee(employee);
