@@ -36,17 +36,24 @@ class _ShowEmployeeState extends State<ShowEmployee> {
                 ),
               ),
             )
-          : DataTable(
-              columns: const [
-                DataColumn(label: Text("ID")),
-                DataColumn(label: Text("Name")),
-                DataColumn(label: Text("Email")),
-                DataColumn(label: Text("Phone")),
-                DataColumn(label: Text("Address")),
-                DataColumn(label: Text("Action")),
-              ],
-              rows: buildRows(),
-            ),
+          : Padding(
+            padding: const EdgeInsets.all(16),
+            child: DataTable(
+             headingTextStyle:const  TextStyle(color: Colors.deepPurple,fontWeight: FontWeight.w600),
+              decoration:
+              BoxDecoration(border: Border.all(color: Colors.deepPurple)),
+              border: TableBorder.all(color: Colors.deepPurple),
+                columns: const [
+                  DataColumn(label: Text("ID")),
+                  DataColumn(label: Text("Name")),
+                  DataColumn(label: Text("Email")),
+                  DataColumn(label: Text("Phone")),
+                  DataColumn(label: Text("Address")),
+                  DataColumn(label: Text("Action")),
+                ],
+                rows: buildRows(),
+              ),
+          ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           print("Button pressed. Navigating to AddEmployeePage...");
