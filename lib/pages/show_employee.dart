@@ -85,7 +85,15 @@ class _ShowEmployeeState extends State<ShowEmployee> {
 
                 });
               },icon: const Icon(Icons.edit,color: Colors.deepPurple,)),
-              IconButton(onPressed: (){},icon: const Icon(Icons.delete,color: Colors.red,)),
+              IconButton(onPressed: (){
+                deleteEmployee(employee);
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) =>
+                    AddEmployeePage(
+                        employeeData: widget.employeeData,
+                        sqlHelper: widget.sqlHelper)));
+                        print("Employee is deleted");
+                },icon: const Icon(Icons.delete,color: Colors.red,)),
             ],
           )),
         ],
@@ -100,5 +108,12 @@ class _ShowEmployeeState extends State<ShowEmployee> {
       whereArgs: [employee.id],
     );
     return result;
+  }
+  Future<void> deleteEmployee(EmployeeModel employee) async {
+    await widget.sqlHelper.db!.delete(
+      'Employee',
+      where: "id = ?",
+      whereArgs: [employee.id],
+    );
   }
 }
