@@ -43,6 +43,7 @@ class _ShowEmployeeState extends State<ShowEmployee> {
                 DataColumn(label: Text("Email")),
                 DataColumn(label: Text("Phone")),
                 DataColumn(label: Text("Address")),
+                DataColumn(label: Text("Action")),
               ],
               rows: buildRows(),
             ),
@@ -75,6 +76,12 @@ class _ShowEmployeeState extends State<ShowEmployee> {
           DataCell(Text(employee.email)),
           DataCell(Text(employee.phone)),
           DataCell(Text(employee.address)),
+          DataCell(Row(
+            children: [
+              Icon(Icons.edit),
+              Icon(Icons.delete),
+            ],
+          )),
         ],
       );
     }).toList();
