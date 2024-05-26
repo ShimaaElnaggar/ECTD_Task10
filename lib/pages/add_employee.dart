@@ -1,14 +1,15 @@
-
 import 'package:ectd_task10/models/employee_model.dart';
 import 'package:ectd_task10/pages/show_employee.dart';
 import 'package:ectd_task10/sql_dp.dart';
 import 'package:ectd_task10/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 
-
 class AddEmployeePage extends StatefulWidget {
+  List<EmployeeModel> employeeData ;
+  var sqlHelper = SqlHelper();
 
-  const AddEmployeePage({super.key});
+  AddEmployeePage(
+      {required this.employeeData, required this.sqlHelper, super.key});
 
   @override
   State<AddEmployeePage> createState() => _AddEmployeePageState();
@@ -25,32 +26,25 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
 
   var formKey = GlobalKey<FormState>();
 
-   final  columnId = 'id';
-
-  final columnName = 'name';
-
-   final columnEmail = 'email';
-
-  final columnPhone = 'phone';
-
-  final columnAddress = 'address';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
-        title: const Text("Add Employee",style: TextStyle(color: Colors.white),),
+        title: const Text(
+          "Add Employee",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Form(
         key: formKey,
-        child: Column(
+        child: ListView(
           children: [
             CustomTextFormField(
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.name,
-                label: "Name",
-                controller: userNameController,
+              textInputAction: TextInputAction.next,
+              keyboardType: TextInputType.name,
+              label: "Name",
+              controller: userNameController,
             ),
             CustomTextFormField(
               textInputAction: TextInputAction.next,
@@ -70,35 +64,45 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
               label: "Address",
               controller: addressController,
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
                   shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-              ),
-                onPressed: (){
-                  if(formKey.currentState!.validate()){
-                    insertEmployee(
-                        EmployeeModel(
-                            name: userNameController.text,
-                            email: emailController.text,
-                            phone: phoneController.text,
-                            address: addressController.text
-                        ),
-                    );
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+                onPressed: () async {
+                  if (formKey.currentState!.validate()) {
+                    var employee = EmployeeModel(
+                        name: userNameController.text,
+                        email: emailController.text,
+                        phone: phoneController.text,
+                        address: addressController.text);
+                    insertEmployee(employee);
+                    List<EmployeeModel> updatedData = await fetchEmployeeData();
+
+                    setState(() {
+                      widget.employeeData = List.from(updatedData);
+                    });
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (context)=>ShowEmployee(
-
-                        )),(route)=>false);
+                        MaterialPageRoute(
+                            builder: (context) => ShowEmployee(
+                              employeeData:[employee, ...widget.employeeData],
+                              sqlHelper: widget.sqlHelper,
+                            )),
+                            (route) => false);
                   }
+
 
                 },
                 child: const Text(
-                    "Submit",
+                  "Submit",
                   style: TextStyle(color: Colors.white),
                 ),
+              ),
             ),
           ],
         ),
@@ -107,22 +111,44 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
   }
 
   Future<int> insertEmployee(EmployeeModel employee) async {
-   try{
-     var sqlHelper =SqlHelper();
-     Map<String, dynamic> row = {
-       columnName: employee.name,
-       columnEmail: employee.email,
-       columnPhone: employee.phone,
-       columnAddress: employee.address,
-     };
-     return await sqlHelper.db!.insert('employee', row);
-   }
+    try {
+      int insertedId =
+          await widget.sqlHelper.db!.insert('employee', employee.toMap());
+      if (insertedId != -1) {
+        employee.id = insertedId; // Update the ID
+        print("Data Inserted Successfully! ID: $insertedId");
+        widget.employeeData.add(employee);
 
-   catch(e){
-    print("Error in inserting row");
+      }
+      return insertedId;
+    } catch (e) {
+      print("Error in inserting row: $e");
+    }
+    return -1;
   }
-  return -1;
-}
 
+  Future<List<EmployeeModel>> fetchEmployeeData() async {
+    try {
+      if (widget.sqlHelper.db == null) {
+        await widget.sqlHelper;
+      }
+      final List<Map<String, dynamic>> maps =
+          await widget.sqlHelper.db!.query('employee');
 
+      List<EmployeeModel> fetchedData = maps.map((map) {
+        return EmployeeModel(
+          id: map['id'],
+          name: map['name'],
+          email: map['email'],
+          phone: map['phone'],
+          address: map['address'],
+        );
+      }).toList();
+
+      return fetchedData;
+    } catch (e) {
+      print("Error fetching employee data: $e");
+      return []; // Return an empty list in case of an error
+    }
+  }
 }
