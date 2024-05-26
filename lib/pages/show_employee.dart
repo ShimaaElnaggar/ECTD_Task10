@@ -78,12 +78,13 @@ class _ShowEmployeeState extends State<ShowEmployee> {
           DataCell(Text(employee.address)),
           DataCell(Row(
             children: [
-              Icon(Icons.edit),
-              Icon(Icons.delete),
+              IconButton(onPressed:(){},icon: const Icon(Icons.edit,color: Colors.deepPurple,)),
+              IconButton(onPressed: (){},icon: const Icon(Icons.delete,color: Colors.red,)),
             ],
           )),
         ],
       );
     }).toList();
   }
+
 }
