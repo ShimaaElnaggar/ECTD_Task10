@@ -78,7 +78,13 @@ class _ShowEmployeeState extends State<ShowEmployee> {
           DataCell(Text(employee.address)),
           DataCell(Row(
             children: [
-              IconButton(onPressed:(){},icon: const Icon(Icons.edit,color: Colors.deepPurple,)),
+              IconButton(onPressed:(){
+                updateEmployee(employee);
+                print("Employee is updated");
+                setState(() {
+
+                });
+              },icon: const Icon(Icons.edit,color: Colors.deepPurple,)),
               IconButton(onPressed: (){},icon: const Icon(Icons.delete,color: Colors.red,)),
             ],
           )),
@@ -86,5 +92,13 @@ class _ShowEmployeeState extends State<ShowEmployee> {
       );
     }).toList();
   }
-
+  Future<int> updateEmployee(EmployeeModel employee) async {
+    int result = await widget.sqlHelper.db!.update(
+      'employee',
+      employee.toMap(),
+      where: "id = ?",
+      whereArgs: [employee.id],
+    );
+    return result;
+  }
 }
