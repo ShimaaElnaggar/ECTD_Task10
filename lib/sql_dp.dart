@@ -10,7 +10,7 @@ class SqlHelper{
   }
 
 
-  void _init() async {
+  Future<void> _init() async {
    try{
 
      if(kIsWeb){
@@ -23,7 +23,7 @@ class SqlHelper{
        db =  await openDatabase(
            'employee.db',
            version : 1,
-           onCreate: ( db , version ){
+           onCreate: ( Database db , int version ){
              print("Database created successfully");
            }
        );
@@ -34,17 +34,22 @@ class SqlHelper{
      }
   void createTables()async{
     try{
-      await db!.execute("""
-    Create table if not exists employee (
-    id Integer primary key,
-    name String not null,
-    email String not null,
-    phone String not null,
-    address String not null
-    )
-    """);
+      if (db == null) {
+        await _init();
+      }
+      await db!.execute('''
+        CREATE TABLE IF NOT EXISTS employee (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            address TEXT NOT NULL
+        )
+        ''');
+      print("Table created Successfully!");
     }catch(error){
       print("Error in creating tables: $error");
     }
   }
+
   }
