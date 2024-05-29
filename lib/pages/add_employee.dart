@@ -43,7 +43,7 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
         phone: phoneController.text,
         address: addressController.text,
       );
-
+      widget.employeeData.add(employee);
       insertEmployee(employee).then((result) async {
         var data = await sqlHelper.db?.query('employee');
         print('data : $data');

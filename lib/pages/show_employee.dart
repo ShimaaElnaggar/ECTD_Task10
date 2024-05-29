@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:ectd_task10/crud_operations.dart';
 import 'package:ectd_task10/models/employee_model.dart';
 import 'package:ectd_task10/pages/add_employee.dart';
@@ -76,8 +78,9 @@ class _ShowEmployeeState extends State<ShowEmployee> {
   }
 
   List<DataRow> buildRows() {
-    return widget.employeeData.map((employee) {
-      return DataRow(
+    List<DataRow> rows = [];
+    for(var employee in widget.employeeData ){
+      rows.add(DataRow(
         cells: [
           DataCell(Text(employee.id.toString())),
           DataCell(Text(employee.name)),
@@ -98,20 +101,21 @@ class _ShowEmployeeState extends State<ShowEmployee> {
                         sqlHelper: widget.sqlHelper)));
                 print("Employee is updated");
                 ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to insert employee.')));
+                    SnackBar(content: Text('Failed to delete employee.')));
               },icon: const Icon(Icons.edit,color: Colors.deepPurple,)),
               IconButton(onPressed: (){
                 deleteEmployee(employee);
                 setState(() {
 
                 });
-                        print("Employee is deleted");
-                },icon: const Icon(Icons.delete,color: Colors.red,)),
+                print("Employee is deleted");
+              },icon: const Icon(Icons.delete,color: Colors.red,)),
             ],
           )),
         ],
-      );
-    }).toList();
+      ));
+    }
+    return rows;
   }
 
 }
