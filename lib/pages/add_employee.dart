@@ -1,3 +1,4 @@
+import 'package:ectd_task10/crud_operations.dart';
 import 'package:ectd_task10/models/employee_model.dart';
 import 'package:ectd_task10/pages/show_employee.dart';
 import 'package:ectd_task10/sql_dp.dart';
@@ -5,7 +6,7 @@ import 'package:ectd_task10/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 
 class AddEmployeePage extends StatefulWidget {
-  List<EmployeeModel> employeeData ;
+  List<EmployeeModel> employeeData;
   var sqlHelper = SqlHelper();
 
   AddEmployeePage(
@@ -25,6 +26,40 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
   var addressController = TextEditingController();
 
   var formKey = GlobalKey<FormState>();
+
+  void dispose() {
+    userNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    addressController.dispose();
+    super.dispose();
+  }
+
+  void submitForm() {
+    if (formKey.currentState!.validate()) {
+      EmployeeModel employee = EmployeeModel(
+        name: userNameController.text,
+        email: emailController.text,
+        phone: phoneController.text,
+        address: addressController.text,
+      );
+
+      insertEmployee(employee).then((result) async {
+        var data = await sqlHelper.db?.query('employee');
+        print('data : $data');
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ShowEmployee(
+                      employeeData: [employee, ...widget.employeeData],
+                      sqlHelper: widget.sqlHelper,
+                    )),
+            (route) => false);
+      });
+      setState(() {});
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,29 +109,7 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
                   ),
                 ),
                 onPressed: () async {
-                  if (formKey.currentState!.validate()) {
-                    var employee = EmployeeModel(
-                        name: userNameController.text,
-                        email: emailController.text,
-                        phone: phoneController.text,
-                        address: addressController.text);
-                    insertEmployee(employee);
-                    List<EmployeeModel> updatedData = await fetchEmployeeData();
-
-                    setState(() {
-                      widget.employeeData = List.from(updatedData);
-                    });
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ShowEmployee(
-                              employeeData:[employee, ...widget.employeeData],
-                              sqlHelper: widget.sqlHelper,
-                            )),
-                            (route) => false);
-                  }
-
-
+                  submitForm();
                 },
                 child: const Text(
                   "Submit",
@@ -108,47 +121,5 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
         ),
       ),
     );
-  }
-
-  Future<int> insertEmployee(EmployeeModel employee) async {
-    try {
-      int insertedId =
-          await widget.sqlHelper.db!.insert('employee', employee.toMap());
-      if (insertedId != -1) {
-        employee.id = insertedId; // Update the ID
-        print("Data Inserted Successfully! ID: $insertedId");
-        widget.employeeData.add(employee);
-
-      }
-      return insertedId;
-    } catch (e) {
-      print("Error in inserting row: $e");
-    }
-    return -1;
-  }
-
-  Future<List<EmployeeModel>> fetchEmployeeData() async {
-    try {
-      if (widget.sqlHelper.db == null) {
-        await widget.sqlHelper;
-      }
-      final List<Map<String, dynamic>> maps =
-          await widget.sqlHelper.db!.query('employee');
-
-      List<EmployeeModel> fetchedData = maps.map((map) {
-        return EmployeeModel(
-          id: map['id'],
-          name: map['name'],
-          email: map['email'],
-          phone: map['phone'],
-          address: map['address'],
-        );
-      }).toList();
-
-      return fetchedData;
-    } catch (e) {
-      print("Error fetching employee data: $e");
-      return []; // Return an empty list in case of an error
-    }
   }
 }

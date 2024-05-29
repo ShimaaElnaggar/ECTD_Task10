@@ -1,3 +1,5 @@
+
+
 class EmployeeModel {
   int? id;
   String name;
@@ -11,6 +13,7 @@ class EmployeeModel {
     required this.email,
     required this.phone,
     required this.address,
+
   });
 
   Map<String, dynamic> toMap() => {
@@ -19,5 +22,6 @@ class EmployeeModel {
     "email": email,
     "phone": phone,
     "address": address,
+
   };
 }

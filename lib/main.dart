@@ -4,12 +4,12 @@ import 'package:ectd_task10/pages/show_employee.dart';
 import 'package:ectd_task10/sql_dp.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
 
   SqlHelper sqlHelper = SqlHelper();
   sqlHelper.createTables();
-  sqlHelper.db;
+  await sqlHelper.init();
 
   runApp( MyApp());
 }

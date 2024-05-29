@@ -1,3 +1,4 @@
+import 'package:ectd_task10/crud_operations.dart';
 import 'package:ectd_task10/models/employee_model.dart';
 import 'package:ectd_task10/pages/add_employee.dart';
 import 'package:ectd_task10/sql_dp.dart';
@@ -57,7 +58,7 @@ class _ShowEmployeeState extends State<ShowEmployee> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           print("Button pressed. Navigating to AddEmployeePage...");
-          final result = await Navigator.push(
+          var result = await Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => AddEmployeePage(
@@ -87,20 +88,23 @@ class _ShowEmployeeState extends State<ShowEmployee> {
             children: [
               IconButton(onPressed:(){
                 updateEmployee(employee);
+                setState(() {
+
+                });
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) =>
                     AddEmployeePage(
                         employeeData: widget.employeeData,
                         sqlHelper: widget.sqlHelper)));
                 print("Employee is updated");
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to insert employee.')));
               },icon: const Icon(Icons.edit,color: Colors.deepPurple,)),
               IconButton(onPressed: (){
                 deleteEmployee(employee);
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) =>
-                    AddEmployeePage(
-                        employeeData: widget.employeeData,
-                        sqlHelper: widget.sqlHelper)));
+                setState(() {
+
+                });
                         print("Employee is deleted");
                 },icon: const Icon(Icons.delete,color: Colors.red,)),
             ],
@@ -109,20 +113,5 @@ class _ShowEmployeeState extends State<ShowEmployee> {
       );
     }).toList();
   }
-  Future<int> updateEmployee(EmployeeModel employee) async {
-    int result = await widget.sqlHelper.db!.update(
-      'employee',
-      employee.toMap(),
-      where: "id = ?",
-      whereArgs: [employee.id],
-    );
-    return result;
-  }
-  Future<void> deleteEmployee(EmployeeModel employee) async {
-    await widget.sqlHelper.db!.delete(
-      'Employee',
-      where: "id = ?",
-      whereArgs: [employee.id],
-    );
-  }
+
 }

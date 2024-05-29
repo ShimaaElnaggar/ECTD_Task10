@@ -5,12 +5,7 @@ import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 class SqlHelper{
   Database? db;
 
-  SqlHelper(){
-    _init();
-  }
-
-
-  Future<void> _init() async {
+  Future<void> init() async {
    try{
 
      if(kIsWeb){
@@ -32,10 +27,11 @@ class SqlHelper{
      print("The error in creating database : $error");
      }
      }
-  void createTables()async{
+
+  Future<void> createTables()async{
     try{
       if (db == null) {
-        await _init();
+        await init();
       }
       await db!.execute('''
         CREATE TABLE IF NOT EXISTS employee (
